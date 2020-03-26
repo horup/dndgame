@@ -17,6 +17,9 @@ export interface Command
 {
     /** Sets monsters */
     setMonsters?:{readonly [id:number]:Monster};
+    
+    /** A tick occured */
+    tick?:{}
 }
 
 export const defaultState:State = {round:0, monsters:{}};
