@@ -1,21 +1,17 @@
 {
-  "name": "server",
+  "name": "client",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "tsnd --respawn ./index.ts"
+    "start": "parcel ./index.html"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "cmdserverclient": "github:horup/cmdserverclient",
-    "ts-node": "^8.8.1",
-    "ts-node-dev": "^1.0.0-pre.44",
+    "parcel-bundler": "^1.12.4",
     "typescript": "^3.8.3"
-  },
-  "devDependencies": {
-    "@types/node": "^12.12.31"
   }
 }

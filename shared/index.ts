@@ -21,7 +21,7 @@ export interface Command
 
 export const defaultState:State = {round:0, monsters:{}};
 
-export const setter = (s:State, c:Command)=>
+export const setter:Handler<State, Command> = (s, c, push)=>
 {
     if (c.setMonsters)
     {
