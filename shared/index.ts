@@ -3,10 +3,10 @@ import {Handler} from 'cmdserverclient';
 export interface State
 {
     round:number;
-    monsters:{readonly [id:number]:Monster};
+    creatures:{readonly [id:number]:Creature};
 }
 
-export interface Monster
+export interface Creature
 {
     readonly x:number;
     readonly y:number;
@@ -15,19 +15,19 @@ export interface Monster
 
 export interface Command
 {
-    /** Sets monsters */
-    setMonsters?:{readonly [id:number]:Monster};
+    /** Sets creatures */
+    setCreatures?:{readonly [id:number]:Creature};
     
     /** A tick occured */
     tick?:{}
 }
 
-export const defaultState:State = {round:0, monsters:{}};
+export const defaultState:State = {round:0, creatures:{}};
 
 export const setter:Handler<State, Command> = (s, c, push)=>
 {
-    if (c.setMonsters)
+    if (c.setCreatures)
     {
-        s.monsters = {...s.monsters, ...c.setMonsters}; 
+        s.creatures = {...s.creatures, ...c.setCreatures}; 
     }
 }

@@ -1,59 +1,45 @@
 import * as http from 'http';
 import {Server, Handler} from 'cmdserverclient';
-import {State, Command, Monster, setter, defaultState} from '../shared';
+import {State, Command, Creature, setter, defaultState} from '../shared';
 
 let nextId = 1;
 const spawner:Handler<State, Command> = (s, c, push) =>
 {
     if (c.tick)
     {
-        if (Object.keys(s.monsters).length < 2)
+        if (Object.keys(s.creatures).length < 2)
         {
             let id = nextId++
-            let monster:Monster = {
+            let creature:Creature = {
                 health:15, 
                 x:Math.random()*100, 
                 y:Math.random()*100
             };
 
-            const cc = {
-                setMonsters:{
-                    [id]:monster
+            const c:Command = {
+                setCreatures:{
+                    [id]:creature
                 }
             };
-            push(cc, true)
+            push(c, true)
         }
     }
 }
 
-const cleaner = (s:State, c:Command)=>
-{
-    if (c.tick)
-    {
-        for (let id in s.monsters)
-        {
-            let m = s.monsters[id];
-            if (m.health <= 0)
-            {
-               // return [{setMonster:{}}]
-            }
-        }
-    }
-}
 
 const thinker:Handler<State, Command> = (s, c, push) =>
 {
     if (c.tick)
     {
-        for (let id in s.monsters)
+        for (let id in s.creatures)
         {
-            let m = s.monsters[id];
+            let m = s.creatures[id];
             if (m.health > 0)
             {
-                let x = m.x + Math.random() - 0.5;
-                let y = m.y + Math.random() - 0.5;
+                let x = m.x + (Math.random() - 0.5) * 30;
+                let y = m.y + (Math.random() - 0.5) * 30;
                 push({
-                    setMonsters:{[id]:{...m, ...{x:x, y:y}}}
+                    setCreatures:{[id]:{...m, ...{x:x, y:y}}}
                 }, true)
             }
         }
