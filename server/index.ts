@@ -1,1 +1,1 @@
-console.log("he");
+import {Server} from 'cmdserverclient';
