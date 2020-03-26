@@ -5,56 +5,48 @@ import {State, Command, Creature, setter, defaultState} from '../shared';
 let nextId = 1;
 const spawner:Handler<State, Command> = (s, c, push) =>
 {
-    if (c.tick)
+    if (c.playerJoined)
     {
-        if (Object.keys(s.creatures).length < 2)
-        {
-            let id = nextId++
-            let creature:Creature = {
-                health:15, 
-                x:Math.random()*100, 
-                y:Math.random()*100
-            };
-
-            const c:Command = {
-                setCreatures:{
-                    [id]:creature
-                }
-            };
-            push(c, true)
+        // player joined, create a creature for the player
+        let creature:Creature = {
+            owner:c.playerJoined.id,
+            x:Math.random() * 32,
+            y:Math.random() * 32,
+            hitpoints:10
         }
+
+        push({setCreatures:{[nextId++]:creature}}, true);
     }
-}
-
-
-const thinker:Handler<State, Command> = (s, c, push) =>
-{
-    if (c.tick)
+    if (c.playerLeft)
     {
-        for (let id in s.creatures)
+        // player left, find his creature and remove it.
+        Object.entries(s.creatures).forEach(([id,creature])=>
         {
-            let m = s.creatures[id];
-            if (m.health > 0)
+            if (creature.owner == c.playerLeft.id)
             {
-                let x = m.x + (Math.random() - 0.5) * 30;
-                let y = m.y + (Math.random() - 0.5) * 30;
-                push({
-                    setCreatures:{[id]:{...m, ...{x:x, y:y}}}
-                }, true)
+                push({deleteCreature:{id:parseInt(id)}}, true);
             }
-        }
+        });
     }
 }
-
 
 
 const httpServer = new http.Server();
 const server = new Server<State, Command>(defaultState, {info:(s)=>console.log(s)});
 server.handlers = [
     spawner,
-    setter,
-    thinker
+    setter
 ]
+
+server.onClientConnected = id=>
+{
+    server.pushCommand({playerJoined:{id:id}}, true);
+}
+
+server.onClientDisconnected = id=>
+{
+    server.pushCommand({playerLeft:{id:id}}, true);
+}
 
 setInterval(()=>
 {

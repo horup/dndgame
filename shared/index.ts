@@ -8,18 +8,29 @@ export interface State
 
 export interface Creature
 {
+    /** The owner of the creature, such as a player */
+    readonly owner?:string;
     readonly x:number;
     readonly y:number;
-    readonly health:number;
+    readonly hitpoints:number;
 }
 
 export interface Command
 {
     /** Sets creatures */
-    setCreatures?:{readonly [id:number]:Creature};
+    readonly setCreatures?:{readonly [id:number]:Creature};
+
+    /** Deletes a creature */
+    readonly deleteCreature?:{readonly id:number};
+
+    /** Player joined the game */
+    readonly playerJoined?:{readonly id:string};
+
+    /** Player left the game */
+    readonly playerLeft?:{readonly id:string};
     
     /** A tick occured */
-    tick?:{}
+    readonly tick?:{}
 }
 
 export const defaultState:State = {round:0, creatures:{}};
@@ -29,5 +40,11 @@ export const setter:Handler<State, Command> = (s, c, push)=>
     if (c.setCreatures)
     {
         s.creatures = {...s.creatures, ...c.setCreatures}; 
+    }
+    if (c.deleteCreature)
+    {
+        let creatures = {...s.creatures};
+        delete creatures[c.deleteCreature.id];
+        s.creatures = creatures;
     }
 }
