@@ -1,10 +1,13 @@
 import {Client, Handler} from 'cmdserverclient';
 import {State, Command, setter} from '../shared';
-
+import * as PIXI from 'pixi.js';
+import * as assets from './assets';
 const client = new Client<State, Command>({info:(s)=>{}});
-
 const canvas:HTMLCanvasElement = document.getElementById('canvas') as HTMLCanvasElement;
-const ctx = canvas.getContext('2d');
+const app = new PIXI.Application({
+    view:canvas
+})
+
 
 client.handlers = [
     setter,
@@ -16,31 +19,33 @@ client.handlers = [
         }
     }
 ]
-
-
 client.connect("ws://localhost:8080");
 
+const ground = new PIXI.Container();
+const creatures = new PIXI.Container();
+const stage = new PIXI.Container();
+stage.scale.set(2);
+stage.addChild(ground);
+stage.addChild(creatures);
+app.stage.addChild(stage);
+const ui = new PIXI.Container();
 
+app.stage.addChild(ui);
 
-const render = ()=>
+app.ticker.add(()=>
 {
-    window.requestAnimationFrame(render);
-    const w = 640;
-    const h = 480;
-    ctx.fillStyle = 'black';
-    ctx.fillRect(0,0, w, h);
-
-    if (client.state == null)
+    const s = client.state;
+    if (s == null)
         return;
-
-    ctx.fillStyle = 'red';
-    for (let id in client.state.creatures)
+    for (let id in s.creatures)
     {
-        let m = client.state.creatures[id];
-        ctx.fillRect(m.x, m.y, 16,16);
-        
+        let c = s.creatures[id];
+        if (creatures.children.filter(o=>o.name ==id).length == 0)
+        {
+            const o = new PIXI.Sprite(new PIXI.Texture(assets.player0, new PIXI.Rectangle(0,0, 16, 16)));
+            o.name = id;
+            creatures.addChild(o);
+        }
     }
+});
 
-}
-
-render();
