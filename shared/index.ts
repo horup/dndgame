@@ -28,6 +28,11 @@ export interface Command
 
     /** Player left the game */
     readonly playerLeft?:{readonly id:string};
+
+    /** Input from a player */
+    readonly playerInput?:{
+        readonly id?:string, 
+        readonly moveTo:{x:number, y:number}}
     
     /** A tick occured */
     readonly tick?:{}

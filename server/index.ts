@@ -30,12 +30,32 @@ const spawner:Handler<State, Command> = (s, c, push) =>
     }
 }
 
+const input:Handler<State, Command> = (s, c, push)=>
+{
+    if (c.playerInput)
+    {
+        let moveTo = c.playerInput.moveTo;
+        let find = Object.entries(s.creatures).filter(([id,creature])=>creature.owner == c.playerInput.id)[0];
+        if (find != null)
+        {
+            const [id, creature] = find;
+            push({
+                setCreatures:{[id]:{...creature, x:moveTo.x, y:moveTo.y}}
+            }, true);
+        }
+    }
+}
+
 
 const httpServer = new http.Server();
 const server = new Server<State, Command>(defaultState, {info:(s)=>console.log(s)});
 server.handlers = [
     spawner,
     setter
+];
+
+server.clientHandlers = [
+    input
 ]
 
 server.onClientConnected = id=>

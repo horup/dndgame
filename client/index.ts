@@ -24,13 +24,33 @@ client.connect("ws://localhost:8080");
 const ground = new PIXI.Container();
 const creatures = new PIXI.Container();
 const stage = new PIXI.Container();
+stage.hitArea = {contains:(x, y)=>true};
 stage.scale.set(16*2);
 stage.addChild(ground);
 stage.addChild(creatures);
 app.stage.addChild(stage);
 const ui = new PIXI.Container();
-
 app.stage.addChild(ui);
+
+stage.interactive =true;
+
+const onClick = (e:PIXI.interaction.InteractionEvent)=>
+{
+    if (e.target == stage)
+    {
+        let p = e.data.getLocalPosition(stage);
+        client.pushCommand({
+            playerInput: {
+                id:client.id,
+                moveTo:{x:p.x, y:p.y}
+            }
+        }, true);
+    }
+};
+
+stage.on('click', onClick);
+
+
 app.ticker.add((dt)=>
 {
     const animationSpeed = 1000;
@@ -50,6 +70,8 @@ app.ticker.add((dt)=>
             o.anchor.x = 0.5;
             o.anchor.y = 0.5;
             o.name = id;
+            o.interactive = true;
+            o.on('click', onClick)
             creatures.addChild(o);
         }
 
