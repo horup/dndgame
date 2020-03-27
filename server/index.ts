@@ -10,8 +10,8 @@ const spawner:Handler<State, Command> = (s, c, push) =>
         // player joined, create a creature for the player
         let creature:Creature = {
             owner:c.playerJoined.id,
-            x:Math.random() * 32,
-            y:Math.random() * 32,
+            x:Math.random() * 10,
+            y:Math.random() * 10,
             hitpoints:10
         }
 
