@@ -1,4 +1,4 @@
-import {Client, Handler} from 'cmdserverclient';
+import {Client, Handler, process} from 'cmdserverclient';
 import {State, Command, setter} from '../shared';
 import * as PIXI from 'pixi.js';
 import * as assets from './assets';
@@ -40,12 +40,19 @@ app.ticker.add(()=>
     for (let id in s.creatures)
     {
         let c = s.creatures[id];
-        if (creatures.children.filter(o=>o.name ==id).length == 0)
+        let o:PIXI.Sprite = creatures.children.filter(o=>o.name ==id)[0] as PIXI.Sprite;
+        if (o == null)
         {
-            const o = new PIXI.Sprite(new PIXI.Texture(assets.player0, new PIXI.Rectangle(0,0, 16, 16)));
+            o = new PIXI.Sprite(new PIXI.Texture(assets.player0, new PIXI.Rectangle(0,0, 16, 16)));
             o.name = id;
             creatures.addChild(o);
         }
+
+        o.x = c.x;
+        o.y = c.y;
     }
+    for (let sprite of creatures.children)
+        if (!s.creatures[sprite.name])
+            creatures.removeChild(sprite);
 });
 
