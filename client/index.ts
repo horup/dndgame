@@ -70,15 +70,30 @@ app.ticker.add((dt)=>
             o.anchor.x = 0.5;
             o.anchor.y = 0.5;
             o.name = id;
+            o.x = c.x;
+            o.y = c.y;
             o.interactive = true;
             o.on('click', onClick)
             creatures.addChild(o);
         }
 
         o.texture.baseTexture = assets.player[animationIndex];
-
-        o.x = c.x;
-        o.y = c.y;
+        let vx = c.x - o.x;
+        let vy = c.y - o.y;
+        const l = Math.sqrt(vx*vx+vy*vy);
+        let nx = vx / l;
+        let ny = vy / l;
+        const speed = 0.25;
+        if (l <= speed)
+        {
+            o.x = c.x;
+            o.y = c.y;
+        }
+        else
+        {
+            o.x += nx*speed;
+            o.y += ny*speed;
+        }
     }
     for (let sprite of creatures.children)
         if (!s.creatures[sprite.name])
