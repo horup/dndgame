@@ -1,6 +1,6 @@
 import * as http from 'http';
 import {Server, Handler} from 'cmdserverclient';
-import {State, Command, Creature, setter, defaultState} from '../shared';
+import {State, Command, Creature, setter, defaultState} from './shared';
 
 let nextId = 1;
 const spawner:Handler<State, Command> = (s, c, push) =>

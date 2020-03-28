@@ -33,9 +33,11 @@ export interface Command
     readonly playerInput?:{
         readonly id?:string, 
         readonly moveTo:{x:number, y:number}}
+
+    readonly tick?:{};
     
-    /** A tick occured */
-    readonly tick?:{}
+    /** A new round has started*/
+    readonly newRoundStarted?:{readonly round:number};
 }
 
 export const defaultState:State = {round:0, creatures:{}};

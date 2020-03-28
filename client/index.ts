@@ -1,5 +1,5 @@
 import {Client, Handler, process} from 'cmdserverclient';
-import {State, Command, setter} from '../shared';
+import {State, Command, setter} from '../server/shared';
 import * as PIXI from 'pixi.js';
 import * as assets from './assets';
 const client = new Client<State, Command>({info:(s)=>{}});
