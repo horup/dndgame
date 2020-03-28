@@ -34,6 +34,9 @@ app.stage.addChild(ui);
 
 stage.interactive =true;
 
+const roundText = new PIXI.Text("Round", {fill:'white', stroke:'black'} as PIXI.TextStyle);
+app.stage.addChild(roundText);
+
 const onClick = (e:PIXI.interaction.InteractionEvent)=>
 {
     if (e.target == stage)
@@ -58,6 +61,8 @@ app.ticker.add((dt)=>
     const s = client.state;
     if (s == null)
         return;
+    roundText.text= `Round: ${s.round}`;
+
     for (let id in s.creatures)
     {
         let c = s.creatures[id];
