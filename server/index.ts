@@ -1,6 +1,6 @@
 import * as http from 'http';
 import {Server, Handler} from 'cmdserverclient';
-import {State, Command, Creature, setter, defaultState} from './shared';
+import {State, Command, Creature, setter, defaultState, Dice} from './shared';
 
 let nextId = 1;
 const spawner:Handler<State, Command> = (s, c, push) =>
@@ -12,7 +12,8 @@ const spawner:Handler<State, Command> = (s, c, push) =>
             owner:c.playerJoined.id,
             x:Math.random() * 10,
             y:Math.random() * 10,
-            hitpoints:10
+            hitpoints:10,
+            initiative:Dice.d20()
         }
 
         push({setCreatures:{[nextId++]:creature}}, true);
@@ -46,12 +47,21 @@ const input:Handler<State, Command> = (s, c, push)=>
     }
 }
 
+const initiativeHandler:Handler<State, Command> = (s, c, push)=>
+{
+    if (c.tick)
+    {
+        
+    }
+}
+
 
 const httpServer = new http.Server();
 const server = new Server<State, Command>(defaultState, {info:(s)=>console.log(s)});
 server.handlers = [
     spawner,
-    setter
+    setter,
+    initiativeHandler
 ];
 
 server.clientHandlers = [

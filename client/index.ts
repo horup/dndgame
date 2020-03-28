@@ -8,7 +8,6 @@ const app = new PIXI.Application({
     view:canvas
 })
 
-
 client.handlers = [
     setter,
     (s, c)=>
@@ -77,10 +76,15 @@ app.ticker.add((dt)=>
             o.name = id;
             o.x = c.x;
             o.y = c.y;
+            //o.tint = 0xAAAAAA;
+            //o.addChild(new PIXI.Text(""+c.initiative, {fill:'white', fontSize:8} as PIXI.TextStyle));
             o.interactive = true;
             o.on('click', onClick)
             creatures.addChild(o);
         }
+
+        if (s.turn != parseInt(id))
+            o.tint = 0xAAAAAA;
 
         o.texture.baseTexture = assets.player[animationIndex];
         let vx = c.x - o.x;

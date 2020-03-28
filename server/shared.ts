@@ -2,6 +2,9 @@ import {Handler} from 'cmdserverclient';
 
 export interface State
 {
+    turn?:Turn;
+
+    /** the current round */
     round:number;
     creatures:{readonly [id:number]:Creature};
 }
@@ -13,10 +16,21 @@ export interface Creature
     readonly x:number;
     readonly y:number;
     readonly hitpoints:number;
+
+    /** The creatures initiative */
+    readonly initiative:number; 
 }
 
-export interface Command
+export interface Turn
 {
+    creatureId:number;
+}
+
+export interface Command    
+{
+    /** set the turn */
+    readonly setTurn?:{readonly turn:};
+
     /** Sets creatures */
     readonly setCreatures?:{readonly [id:number]:Creature};
 
@@ -40,7 +54,7 @@ export interface Command
     readonly newRoundStarted?:{readonly round:number};
 }
 
-export const defaultState:State = {round:0, creatures:{}};
+export const defaultState:State = {round:0, turn:undefined, creatures:{}};
 
 export const setter:Handler<State, Command> = (s, c, push)=>
 {
@@ -53,5 +67,12 @@ export const setter:Handler<State, Command> = (s, c, push)=>
         let creatures = {...s.creatures};
         delete creatures[c.deleteCreature.id];
         s.creatures = creatures;
+    }
+}
+
+export const Dice = 
+{
+    d20:(modifier:number = 0)=>{
+        return Math.ceil(Math.random()*20) + modifier;
     }
 }
