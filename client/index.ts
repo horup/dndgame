@@ -12,10 +12,8 @@ client.handlers = [
     setter,
     (s, c)=>
     {
-        if (c.tick)
-        {
-            
-        }
+        if (!c.tick)
+            console.log(c);
     }
 ]
 client.connect("ws://localhost:8080");
@@ -83,8 +81,10 @@ app.ticker.add((dt)=>
             creatures.addChild(o);
         }
 
-        if (s.turn != parseInt(id))
+        if (s.turn == null || s.turn.creatureId != parseInt(id))
             o.tint = 0xAAAAAA;
+        else
+            o.tint = 0xFFFFFF;
 
         o.texture.baseTexture = assets.player[animationIndex];
         let vx = c.x - o.x;
@@ -92,7 +92,7 @@ app.ticker.add((dt)=>
         const l = Math.sqrt(vx*vx+vy*vy);
         let nx = vx / l;
         let ny = vy / l;
-        const speed = 0.25;
+        const speed = 0.5;
         if (l <= speed)
         {
             o.x = c.x;

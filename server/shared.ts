@@ -19,17 +19,20 @@ export interface Creature
 
     /** The creatures initiative */
     readonly initiative:number; 
+
+    /** True if the creatures acted this round */
+    readonly acted:boolean;
 }
 
 export interface Turn
 {
-    creatureId:number;
+    readonly creatureId:number;
 }
 
 export interface Command    
 {
     /** set the turn */
-    readonly setTurn?:{readonly turn:};
+    readonly setTurn?:{readonly turn:Turn};
 
     /** Sets creatures */
     readonly setCreatures?:{readonly [id:number]:Creature};
@@ -51,7 +54,7 @@ export interface Command
     readonly tick?:{};
     
     /** A new round has started*/
-    readonly newRoundStarted?:{readonly round:number};
+    readonly setRound?:{readonly round:number};
 }
 
 export const defaultState:State = {round:0, turn:undefined, creatures:{}};
@@ -67,6 +70,14 @@ export const setter:Handler<State, Command> = (s, c, push)=>
         let creatures = {...s.creatures};
         delete creatures[c.deleteCreature.id];
         s.creatures = creatures;
+    }
+    if (c.setRound)
+    {
+        s.round = c.setRound.round;
+    }
+    if (c.setTurn)
+    {
+        s.turn = c.setTurn.turn;
     }
 }
 

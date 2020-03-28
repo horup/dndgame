@@ -3,7 +3,7 @@ import {Server, Handler} from 'cmdserverclient';
 import {State, Command, Creature, setter, defaultState, Dice} from './shared';
 
 let nextId = 1;
-const spawner:Handler<State, Command> = (s, c, push) =>
+const spawnHandler:Handler<State, Command> = (s, c, push) =>
 {
     if (c.playerJoined)
     {
@@ -13,7 +13,8 @@ const spawner:Handler<State, Command> = (s, c, push) =>
             x:Math.random() * 10,
             y:Math.random() * 10,
             hitpoints:10,
-            initiative:Dice.d20()
+            initiative:Dice.d20(),
+            acted:true
         }
 
         push({setCreatures:{[nextId++]:creature}}, true);
@@ -31,7 +32,7 @@ const spawner:Handler<State, Command> = (s, c, push) =>
     }
 }
 
-const input:Handler<State, Command> = (s, c, push)=>
+const inputHandler:Handler<State, Command> = (s, c, push)=>
 {
     if (c.playerInput)
     {
@@ -40,18 +41,73 @@ const input:Handler<State, Command> = (s, c, push)=>
         if (find != null)
         {
             const [id, creature] = find;
-            push({
-                setCreatures:{[id]:{...creature, x:moveTo.x, y:moveTo.y}}
-            }, true);
+            if (s.turn && s.turn.creatureId == parseInt(id))
+            {
+                push({
+                    setCreatures:{[id]:{...creature, x:moveTo.x, y:moveTo.y, acted:true}}
+                }, true);
+            }
         }
     }
 }
 
-const initiativeHandler:Handler<State, Command> = (s, c, push)=>
+const roundHandler:Handler<State, Command> = (s, c, push)=>
+{
+    if (c.setRound)
+    {
+        // new round has started, reset acted for all creatures
+        let creatures = {...s.creatures};
+        for (let id in creatures)
+        {
+            creatures[id] = {...creatures[id], acted:false};
+        }
+        push({
+            setCreatures:creatures
+        }, true);
+    }
+}
+
+const turnHandler:Handler<State, Command> = (s, c, push)=>
 {
     if (c.tick)
     {
-        
+        if (!s.turn)
+        {
+            // no one has the turn 
+            // find a creature which can act this round
+            let creatures = Object.entries(s.creatures);
+            let next = creatures.filter(c=>!c[1].acted)
+            .sort((a,b)=>a[1].initiative - b[1].initiative);
+
+            if (next.length == 0)
+            {
+                // no creatures can act this round, advance to next round
+                push({setRound:{round:s.round + 1}}, true);
+            }
+            else
+            {
+                push({
+                    setTurn:{
+                        turn:{
+                            creatureId:parseInt(next[0][0])
+                        }
+                    }
+                }, true)
+            }
+        }
+        else
+        {
+            let creature = s.creatures[s.turn.creatureId];
+            if (creature == null || creature.acted)
+            {
+                // creature was not found or it has acted this round, give up the turn
+                push({
+                    setTurn:{
+                        turn:null
+                    }
+                }, true);
+            }
+        }
     }
 }
 
@@ -59,13 +115,14 @@ const initiativeHandler:Handler<State, Command> = (s, c, push)=>
 const httpServer = new http.Server();
 const server = new Server<State, Command>(defaultState, {info:(s)=>console.log(s)});
 server.handlers = [
-    spawner,
+    spawnHandler,
     setter,
-    initiativeHandler
+    turnHandler,
+    roundHandler
 ];
 
 server.clientHandlers = [
-    input
+    inputHandler
 ]
 
 server.onClientConnected = id=>
