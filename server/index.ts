@@ -31,7 +31,7 @@ setInterval(()=>
     server.pushCommand({
         tick:{}
     }, true)
-}, 1000);
+}, 100);
 
 server.attach(httpServer);
 httpServer.listen(8080, "0.0.0.0");

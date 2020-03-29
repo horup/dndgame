@@ -86,7 +86,7 @@ app.ticker.add((dt)=>
         else
             o.tint = 0xFFFFFF;
 
-        o.texture.baseTexture = assets.player[animationIndex];
+        assets.setBaseTexture(o, c.class1, animationIndex);
         let vx = c.x - o.x;
         let vy = c.y - o.y;
         const l = Math.sqrt(vx*vx+vy*vy);

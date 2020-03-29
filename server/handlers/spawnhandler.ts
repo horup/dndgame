@@ -1,5 +1,5 @@
 import { Handler } from "cmdserverclient";
-import { State, Command, Creature, Dice } from "../shared";
+import { State, Command, Creature, Dice, Class } from "../shared";
 
 let nextId = 1;
 export const spawnHandler:Handler<State, Command> = (s, c, push) =>
@@ -13,7 +13,8 @@ export const spawnHandler:Handler<State, Command> = (s, c, push) =>
             y:Math.random() * 10,
             hitpoints:10,
             initiative:Dice.d20(),
-            acted:true
+            acted:true,
+            class1:Class.Fighter
         }
 
         push({setCreatures:{[nextId++]:creature}}, true);
@@ -28,5 +29,23 @@ export const spawnHandler:Handler<State, Command> = (s, c, push) =>
                 push({deleteCreature:{id:parseInt(id)}}, true);
             }
         });
+    }
+    if (c.tick)
+    {
+        const players = Object.entries(s.creatures).filter(c=>c[1].owner);
+        const monsters = Object.entries(s.creatures).filter(c=>!c[1].owner);
+        if (monsters.length < players.length)
+        {
+            let monster:Creature = {
+                owner:null,
+                x:Math.random() * 20,
+                y:Math.random() * 20,
+                hitpoints:8,
+                initiative:Dice.d20(),
+                acted:true,
+                class1:Class.Skeleton
+            }
+            push({setCreatures:{[nextId++]:monster}}, true);
+        }
     }
 }

@@ -9,6 +9,13 @@ export interface State
     creatures:{readonly [id:number]:Creature};
 }
 
+export enum Class
+{
+    Fighter,
+    Skeleton
+}
+
+
 export interface Creature
 {
     /** The owner of the creature, such as a player */
@@ -22,6 +29,9 @@ export interface Creature
 
     /** True if the creatures acted this round */
     readonly acted:boolean;
+
+    readonly class1:Class; 
+
 }
 
 export interface Turn
