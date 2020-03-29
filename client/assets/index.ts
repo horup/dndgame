@@ -6,7 +6,7 @@ export const player = [PIXI.Texture.from(require('./Characters/player0.png')).ba
 export const undead = [PIXI.Texture.from(require('./Characters/Undead0.png')).baseTexture, PIXI.Texture.from(require('./Characters/Undead1.png')).baseTexture];
 
 
-export function setBaseTexture(sprite:PIXI.Sprite, class1:Class, index:number):PIXI.BaseTexture[]
+export function setCreatureSprite(sprite:PIXI.Sprite, class1:Class, index:number):PIXI.BaseTexture[]
 {
     let base = sprite.texture.baseTexture;
     let frame = sprite.texture.frame;
