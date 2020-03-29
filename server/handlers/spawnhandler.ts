@@ -26,7 +26,7 @@ export const spawnHandler:Handler<State, Command> = (s, c, push) =>
         {
             if (creature.owner == c.playerLeft.id)
             {
-                push({deleteCreature:{id:parseInt(id)}}, true);
+                push({deleteCreature:{id:id}}, true);
             }
         });
     }

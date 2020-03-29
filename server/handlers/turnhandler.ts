@@ -23,7 +23,7 @@ export const turnHandler:Handler<State, Command> = (s, c, push)=>
                 push({
                     setTurn:{
                         turn:{
-                            creatureId:parseInt(next[0][0])
+                            creatureId:next[0][0]
                         }
                     }
                 }, true)

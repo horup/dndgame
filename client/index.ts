@@ -12,8 +12,8 @@ client.handlers = [
     setter,
     (s, c)=>
     {
-        if (!c.tick)
-            console.log(c);
+       /* if (!c.tick)
+            console.log(c);*/
     }
 ]
 client.connect("ws://localhost:8080");
@@ -34,17 +34,42 @@ stage.interactive =true;
 const roundText = new PIXI.Text("Round", {fill:'white', stroke:'black'} as PIXI.TextStyle);
 app.stage.addChild(roundText);
 
+const onKeydown = (e:KeyboardEvent)=>
+{
+    Object.entries(client.state.creatures).forEach(([id,creature])=>
+    {
+        if (creature.owner == client.id)
+        {
+           
+            client.pushCommand({
+                creatureAction:{
+                    creatureId:id,
+                    endTurn:true
+                }
+            }, true);
+        }
+    });
+}
+
+window.onkeydown = onKeydown;
+
 const onClick = (e:PIXI.interaction.InteractionEvent)=>
 {
     if (e.target == stage)
     {
-        let p = e.data.getLocalPosition(stage);
-        client.pushCommand({
-            playerInput: {
-                id:client.id,
-                moveTo:{x:p.x, y:p.y}
+        Object.entries(client.state.creatures).forEach(([id,creature])=>
+        {
+            if (creature.owner == client.id)
+            {
+                let p = e.data.getLocalPosition(stage);
+                client.pushCommand({
+                    creatureAction:{
+                        creatureId:id,
+                        moveTo:p
+                    }
+                }, true);
             }
-        }, true);
+        });
     }
 };
 
@@ -81,7 +106,7 @@ app.ticker.add((dt)=>
             creatures.addChild(o);
         }
 
-        if (s.turn == null || s.turn.creatureId != parseInt(id))
+        if (s.turn == null || s.turn.creatureId != id)
             o.tint = 0xAAAAAA;
         else
             o.tint = 0xFFFFFF;

@@ -6,7 +6,7 @@ export interface State
 
     /** the current round */
     round:number;
-    creatures:{readonly [id:number]:Creature};
+    creatures:{readonly [id:string]:Creature};
 }
 
 export enum Class
@@ -36,7 +36,8 @@ export interface Creature
 
 export interface Turn
 {
-    readonly creatureId:number;
+    /** This creature has the turn */
+    readonly creatureId:string;
 }
 
 export interface Command    
@@ -44,11 +45,14 @@ export interface Command
     /** set the turn */
     readonly setTurn?:{readonly turn:Turn};
 
+    /** turn ended */
+    readonly endTurn?:{};
+
     /** Sets creatures */
-    readonly setCreatures?:{readonly [id:number]:Creature};
+    readonly setCreatures?:{readonly [id:string]:Creature};
 
     /** Deletes a creature */
-    readonly deleteCreature?:{readonly id:number};
+    readonly deleteCreature?:{readonly id:string};
 
     /** Player joined the game */
     readonly playerJoined?:{readonly id:string};
@@ -56,15 +60,17 @@ export interface Command
     /** Player left the game */
     readonly playerLeft?:{readonly id:string};
 
-    /** Input from a player */
-    readonly playerInput?:{
-        readonly id?:string, 
-        readonly moveTo:{x:number, y:number}}
-
     readonly tick?:{};
     
     /** A new round has started*/
     readonly setRound?:{readonly round:number};
+
+    /** A creature with id took an action */
+    readonly creatureAction?:{
+        readonly creatureId:string;
+        readonly moveTo?:{x?:number, y?:number}
+        readonly endTurn?:boolean
+    }
 }
 
 export const defaultState:State = {round:0, turn:undefined, creatures:{}};
