@@ -1,5 +1,5 @@
 import {Client, Handler, process} from 'cmdserverclient';
-import {State, Command, setter} from '../server/shared';
+import {State, Command, setter, Creature} from '../server/shared';
 import * as PIXI from 'pixi.js';
 import * as assets from './assets';
 const client = new Client<State, Command>({info:(s)=>{}});
@@ -32,7 +32,13 @@ app.stage.addChild(ui);
 stage.interactive =true;
 
 const roundText = new PIXI.Text("Round", {fill:'white', stroke:'black'} as PIXI.TextStyle);
-app.stage.addChild(roundText);
+const modeText = new PIXI.Text("", {fill:'white', stroke:'black'} as PIXI.TextStyle);
+const statsText = new PIXI.Text("", {fill:'white', stroke:'black'} as PIXI.TextStyle);
+modeText.position.y = 32;
+statsText.position.y = modeText.y + 32;
+ui.addChild(roundText);
+ui.addChild(modeText);
+ui.addChild(statsText);
 
 const onKeydown = (e:KeyboardEvent)=>
 {
@@ -84,10 +90,12 @@ app.ticker.add((dt)=>
     if (s == null)
         return;
     roundText.text= `Round: ${s.round}`;
-
+    let me:string = null;
     for (let id in s.creatures)
     {
         let c = s.creatures[id];
+        if (c.owner == client.id)
+            me = id;
         let o:PIXI.Sprite = creatures.children.filter(o=>o.name ==id)[0] as PIXI.Sprite;
         if (o == null)
         {
@@ -111,6 +119,7 @@ app.ticker.add((dt)=>
         else
             o.tint = 0xFFFFFF;
 
+
         assets.setCreatureSprite(o, c.class1, animationIndex);
         let vx = c.x - o.x;
         let vy = c.y - o.y;
@@ -129,6 +138,20 @@ app.ticker.add((dt)=>
             o.y += ny*speed;
         }
     }
+
+    if (me != null)
+    {
+        let creature = s.creatures[me];
+        //modeText.text = "Move";
+        statsText.text = "Movement: \n" + Math.floor(creature.movement * 5) + "/" + Math.floor(creature.movementTotal * 5);
+    }
+
+ //   if (!(s.turn == null || s.turn.creatureId != me))
+    {
+        ui.alpha = (s.turn == null || s.turn.creatureId != me) ? 0.75 : 1.0;
+    }
+
+
     for (let sprite of creatures.children)
         if (!s.creatures[sprite.name])
             creatures.removeChild(sprite);
