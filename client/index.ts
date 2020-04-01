@@ -73,10 +73,15 @@ const onClick = (e:PIXI.interaction.InteractionEvent)=>
             if (creature.owner == client.id)
             {
                 let p = e.data.getLocalPosition(stage);
-                const msg = new FloatingMessage("hello world!");
-
-                msg.position = new PIXI.Point(p.x * 32, p.y * 32);
-                floatingMessages.addChild(msg);
+                let vx = p.x - creature.x;
+                let vy = p.y - creature.y;
+                let l = Math.sqrt(vx*vx+ vy*vy);
+                if (l > creature.movement)
+                {
+                    const msg = new FloatingMessage("Not enough movement");
+                    msg.position = new PIXI.Point(p.x * 32, p.y * 32);
+                    floatingMessages.addChild(msg);
+                }
                 client.pushCommand({
                     creatureAction:{
                         creatureId:id,
