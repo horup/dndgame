@@ -1,5 +1,5 @@
 import { Handler } from "cmdserverclient";
-import { State, Command, Creature, Dice, Class } from "../shared";
+import { State, Command, Creature, Dice, CreatureType } from "../shared";
 
 let nextId = 1;
 export const spawnHandler:Handler<State, Command> = (s, c, push) =>
@@ -14,7 +14,9 @@ export const spawnHandler:Handler<State, Command> = (s, c, push) =>
             hitpoints:10,
             initiative:Dice.d20(),
             acted:true,
-            class1:Class.Fighter
+            class1:CreatureType.Fighter,
+            movement:6,
+            movementTotal:6
         }
 
         push({setCreatures:{[nextId++]:creature}}, true);
@@ -43,7 +45,9 @@ export const spawnHandler:Handler<State, Command> = (s, c, push) =>
                 hitpoints:8,
                 initiative:Dice.d20(),
                 acted:true,
-                class1:Class.Skeleton
+                class1:CreatureType.Skeleton,
+                movement:6,
+                movementTotal:6
             }
             push({setCreatures:{[nextId++]:monster}}, true);
         }

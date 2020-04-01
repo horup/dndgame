@@ -9,7 +9,7 @@ export interface State
     creatures:{readonly [id:string]:Creature};
 }
 
-export enum Class
+export enum CreatureType
 {
     Fighter,
     Skeleton
@@ -29,9 +29,10 @@ export interface Creature
 
     /** True if the creatures acted this round */
     readonly acted:boolean;
+    readonly class1:CreatureType; 
 
-    readonly class1:Class; 
-
+    readonly movement:number;
+    readonly movementTotal:number;
 }
 
 export interface Turn

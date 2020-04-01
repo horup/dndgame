@@ -16,11 +16,18 @@ export const creatureHandler:Handler<State, Command> = (s, c, push, origin)=>
             return; // not the creatures turn
         if (c.creatureAction.moveTo != null)
         {
-            push({
-                setCreatures:{[id]:{...creature, 
-                    x:c.creatureAction.moveTo.x, 
-                    y:c.creatureAction.moveTo.y}}
-            }, true);
+            const m =c.creatureAction.moveTo;
+            const vx = m.x - creature.x;
+            const vy = m.y - creature.y;
+            const l = Math.sqrt(vx*vx+vy*vy);
+            if (l <= creature.movement)
+            {
+                push({
+                    setCreatures:{[id]:{...creature, 
+                        x:c.creatureAction.moveTo.x, 
+                        y:c.creatureAction.moveTo.y, movement:creature.movement - l}}
+                }, true);
+            }
         }
         if (c.creatureAction.endTurn != null)
         {
