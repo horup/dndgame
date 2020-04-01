@@ -2,6 +2,7 @@ import {Client, Handler, process} from 'cmdserverclient';
 import {State, Command, setter, Creature} from '../server/shared';
 import * as PIXI from 'pixi.js';
 import * as assets from './assets';
+import { FloatingMessage } from './floatingmessage';
 const client = new Client<State, Command>({info:(s)=>{}});
 const canvas:HTMLCanvasElement = document.getElementById('canvas') as HTMLCanvasElement;
 const app = new PIXI.Application({
@@ -40,13 +41,17 @@ ui.addChild(roundText);
 ui.addChild(modeText);
 ui.addChild(statsText);
 
+
+const floatingMessages = new PIXI.Container();
+ui.addChild(floatingMessages);
+
+
 const onKeydown = (e:KeyboardEvent)=>
 {
     Object.entries(client.state.creatures).forEach(([id,creature])=>
     {
         if (creature.owner == client.id)
         {
-           
             client.pushCommand({
                 creatureAction:{
                     creatureId:id,
@@ -68,6 +73,10 @@ const onClick = (e:PIXI.interaction.InteractionEvent)=>
             if (creature.owner == client.id)
             {
                 let p = e.data.getLocalPosition(stage);
+                const msg = new FloatingMessage("hello world!");
+
+                msg.position = new PIXI.Point(p.x * 32, p.y * 32);
+                floatingMessages.addChild(msg);
                 client.pushCommand({
                     creatureAction:{
                         creatureId:id,
@@ -155,5 +164,10 @@ app.ticker.add((dt)=>
     for (let sprite of creatures.children)
         if (!s.creatures[sprite.name])
             creatures.removeChild(sprite);
+
+    floatingMessages.children.forEach((msg:FloatingMessage)=>
+    {
+        msg.update();
+    });
 });
 
