@@ -2,13 +2,10 @@ import {Client, Handler, process} from 'cmdserverclient';
 import {State, Command, setter, Creature} from '../server/shared';
 import * as PIXI from 'pixi.js';
 import * as assets from './assets';
-import { FloatingMessage } from './floatingmessage';
-const client = new Client<State, Command>({info:(s)=>{}});
-const canvas:HTMLCanvasElement = document.getElementById('canvas') as HTMLCanvasElement;
-const app = new PIXI.Application({
-    view:canvas
-})
+import { FloatingMessage } from './render/floatingmessage';
+import {app, board, pushFloatingMessage, roundText, creatures, statsText, update, ui} from './render';
 
+const client = new Client<State, Command>({info:(s)=>{}});
 client.handlers = [
     setter,
     (s, c)=>
@@ -19,31 +16,6 @@ client.handlers = [
 ]
 client.connect("ws://localhost:8080");
 
-const ground = new PIXI.Container();
-const creatures = new PIXI.Container();
-const stage = new PIXI.Container();
-stage.hitArea = {contains:(x, y)=>true};
-stage.scale.set(16*2);
-stage.addChild(ground);
-stage.addChild(creatures);
-app.stage.addChild(stage);
-const ui = new PIXI.Container();
-app.stage.addChild(ui);
-
-stage.interactive =true;
-
-const roundText = new PIXI.Text("Round", {fill:'white', stroke:'black'} as PIXI.TextStyle);
-const modeText = new PIXI.Text("", {fill:'white', stroke:'black'} as PIXI.TextStyle);
-const statsText = new PIXI.Text("", {fill:'white', stroke:'black'} as PIXI.TextStyle);
-modeText.position.y = 32;
-statsText.position.y = modeText.y + 32;
-ui.addChild(roundText);
-ui.addChild(modeText);
-ui.addChild(statsText);
-
-
-const floatingMessages = new PIXI.Container();
-ui.addChild(floatingMessages);
 
 
 const onKeydown = (e:KeyboardEvent)=>
@@ -66,21 +38,20 @@ window.onkeydown = onKeydown;
 
 const onClick = (e:PIXI.interaction.InteractionEvent)=>
 {
-    if (e.target == stage)
+    if (e.target == board)
     {
         Object.entries(client.state.creatures).forEach(([id,creature])=>
         {
             if (creature.owner == client.id)
             {
-                let p = e.data.getLocalPosition(stage);
+                let p = e.data.getLocalPosition(board);
                 let vx = p.x - creature.x;
                 let vy = p.y - creature.y;
                 let l = Math.sqrt(vx*vx+ vy*vy);
                 if (l > creature.movement)
                 {
-                    const msg = new FloatingMessage("Not enough movement");
-                    msg.position = new PIXI.Point(p.x * 32, p.y * 32);
-                    floatingMessages.addChild(msg);
+                    pushFloatingMessage(new FloatingMessage("Not enough movement"))
+                    .position = new PIXI.Point(p.x * 32, p.y * 32);
                 }
                 client.pushCommand({
                     creatureAction:{
@@ -93,7 +64,7 @@ const onClick = (e:PIXI.interaction.InteractionEvent)=>
     }
 };
 
-stage.on('click', onClick);
+board.on('click', onClick);
 
 
 app.ticker.add((dt)=>
@@ -165,14 +136,6 @@ app.ticker.add((dt)=>
         ui.alpha = (s.turn == null || s.turn.creatureId != me) ? 0.75 : 1.0;
     }
 
-
-    for (let sprite of creatures.children)
-        if (!s.creatures[sprite.name])
-            creatures.removeChild(sprite);
-
-    floatingMessages.children.forEach((msg:FloatingMessage)=>
-    {
-        msg.update();
-    });
+    update(client);
 });
 
