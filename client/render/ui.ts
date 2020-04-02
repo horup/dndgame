@@ -7,16 +7,25 @@ export class UI extends PIXI.Container
 {
     debug:PIXI.Text;
     floatingMessages:PIXI.Container;
-    constructor()
+    client:Client<State, Command>;
+    constructor(client:Client<State, Command>)
     {
         super();
+        this.client = client;
         this.debug = new PIXI.Text("");
         this.addChild(this.debug);
         this.floatingMessages = new PIXI.Container();
         this.addChild(this.floatingMessages);
     }
-    tick(client:Client<State, Command>, lastTime:number, s:State)
+
+    pushFloatingMessage(msg:FloatingMessage)
     {
+        this.floatingMessages.addChild(msg);
+    }
+    
+    tick(lastTime:number)
+    {
+        const s = this.client.state;
         this.debug.text = "";
 
         this.debug.text= `Round: ${s.round}\n`;

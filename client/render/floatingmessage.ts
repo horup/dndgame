@@ -14,7 +14,7 @@ export class FloatingMessage extends PIXI.Text
         this.alpha -= 0.01;
         if (this.alpha <= 0)
         {
-            //this.parent.removeChild(this)
+            this.parent.removeChild(this)
         }
     }
 }

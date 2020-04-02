@@ -22,11 +22,29 @@ client.handlers = [
 ]
 client.connect("ws://localhost:8080");
 
-const render = new Render(app);
+const render = new Render(app, client);
 
 app.ticker.add((dt)=>{
-    render.tick(client, app.ticker.lastTime);
-})
+    render.tick(app.ticker.lastTime);
+});
+
+const onKeydown = (e:KeyboardEvent)=>
+{
+    Object.entries(client.state.creatures).forEach(([id,creature])=>
+    {
+        if (creature.owner == client.id)
+        {
+            client.pushCommand({
+                creatureAction:{
+                    creatureId:id,
+                    endTurn:true
+                }
+            }, true);
+        }
+    });
+}
+
+window.onkeydown = onKeydown;
 
 /*
 

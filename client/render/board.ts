@@ -2,28 +2,69 @@ import * as PIXI from 'pixi.js';
 import { Client } from 'cmdserverclient';
 import { State, Command } from '../../server/shared';
 import * as assets from './../assets';
+import { UI } from './ui';
+import { FloatingMessage } from './floatingmessage';
 
 export class Board extends PIXI.Container
 {
     creatures:PIXI.Container;
-    constructor()
+    client:Client<State, Command>;
+    constructor(client:Client<State, Command>)
     {
         super();
+        this.interactive = true;
+        this.hitArea = new PIXI.Rectangle(0,0, 10000, 10000);
+        this.client = client;
         const s = 2;
         this.scale.set(16*s);
         this.creatures = new PIXI.Container();
         this.addChild(this.creatures);
+
+        this.on('click', this.onClick);
     }
 
-    tick(client:Client<State, Command>, lastTime:number, s:State)
+    onFloatingMessage:(msg:FloatingMessage)=>any = (msg)=>{}
+
+    onClick(e:PIXI.interaction.InteractionEvent)
     {
+        console.log("test");
+        if (e.target == this)
+        {
+            Object.entries(this.client.state.creatures).forEach(([id,creature])=>
+            {
+                if (creature.owner == this.client.id)
+                {
+                    let p = e.data.getLocalPosition(this);
+                    let vx = p.x - creature.x;
+                    let vy = p.y - creature.y;
+                    let l = Math.sqrt(vx*vx+ vy*vy);
+                    if (l > creature.movement)
+                    {
+                        let msg = new FloatingMessage("Not enough movement");
+                        msg.position = new PIXI.Point(p.x * 32, p.y * 32);
+                        this.onFloatingMessage(msg);
+                    }
+                    this.client.pushCommand({
+                        creatureAction:{
+                            creatureId:id,
+                            moveTo:p
+                        }
+                    }, true);
+                }
+            });
+        }
+    }
+
+    tick(lastTime:number)
+    {
+        const s = this.client.state;
         const animationSpeed = 1000;
         const animationIndex = (lastTime % animationSpeed) < animationSpeed/2 ? 0 : 1;
         let me:string = null;
         for (let id in s.creatures)
         {
             let c = s.creatures[id];
-            if (c.owner == client.id)
+            if (c.owner == this.client.id)
                 me = id;
             let o:PIXI.Sprite = this.creatures.children.filter(o=>o.name ==id)[0] as PIXI.Sprite;
             if (o == null)
