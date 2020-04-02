@@ -4,6 +4,9 @@ import * as PIXI from 'pixi.js';
 import * as assets from './assets';
 import { FloatingMessage } from './render/floatingmessage';
 import {app, board, pushFloatingMessage, roundText, creatures, statsText, update, ui} from './render';
+import {Render} from './render';
+
+
 
 const client = new Client<State, Command>({info:(s)=>{}});
 client.handlers = [
@@ -15,6 +18,7 @@ client.handlers = [
     }
 ]
 client.connect("ws://localhost:8080");
+
 
 
 

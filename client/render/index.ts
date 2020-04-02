@@ -49,3 +49,18 @@ export const update = (client:Client<State, Command>) =>
         msg.update();
     });
 }
+
+
+export class Render
+{
+    app:PIXI.Application;
+    constructor(app:PIXI.Application)
+    {
+        this.app = app;
+    }
+
+    update(client:Client<State, Command>)
+    {
+        
+    }
+}
