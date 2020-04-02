@@ -3,9 +3,12 @@ import {State, Command, setter, Creature} from '../server/shared';
 import * as PIXI from 'pixi.js';
 import * as assets from './assets';
 import { FloatingMessage } from './render/floatingmessage';
-import {app, board, pushFloatingMessage, roundText, creatures, statsText, update, ui} from './render';
 import {Render} from './render';
 
+const canvas:HTMLCanvasElement = document.getElementById('canvas') as HTMLCanvasElement;
+const app = new PIXI.Application({
+    view:canvas
+})
 
 
 const client = new Client<State, Command>({info:(s)=>{}});
@@ -19,7 +22,13 @@ client.handlers = [
 ]
 client.connect("ws://localhost:8080");
 
+const render = new Render(app);
 
+app.ticker.add((dt)=>{
+    render.tick(client, app.ticker.lastTime);
+})
+
+/*
 
 
 const onKeydown = (e:KeyboardEvent)=>
@@ -143,3 +152,4 @@ app.ticker.add((dt)=>
     update(client);
 });
 
+*/

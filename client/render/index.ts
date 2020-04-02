@@ -2,8 +2,10 @@ import * as PIXI from 'pixi.js';
 import { FloatingMessage } from './floatingmessage';
 import { Client } from 'cmdserverclient';
 import { Command, State } from '../../server/shared';
+import { Board } from './board';
+import { UI } from './ui';
 export * from './floatingmessage';
-
+/*
 const canvas:HTMLCanvasElement = document.getElementById('canvas') as HTMLCanvasElement;
 export const app = new PIXI.Application({
     view:canvas
@@ -50,17 +52,33 @@ export const update = (client:Client<State, Command>) =>
     });
 }
 
-
+*/
 export class Render
 {
     app:PIXI.Application;
+    root:PIXI.Container;
+
+    board:Board;
+    ui:UI;
+
+
     constructor(app:PIXI.Application)
     {
         this.app = app;
+        this.root = app.stage;
+        this.board = new Board();
+        this.ui = new UI();
+        this.root.addChild(this.board);
+        this.root.addChild(this.ui);
     }
 
-    update(client:Client<State, Command>)
+    tick(client:Client<State, Command>, lastTime:number)
     {
-        
+        const s = client.state;
+        if (s == null)
+            return;
+
+        this.board.tick(client, lastTime, s);
+        this.ui.tick(client, lastTime, s);
     }
 }
