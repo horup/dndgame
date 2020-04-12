@@ -6,8 +6,22 @@
 			"script": "watch_server",
 			"group": "build",
 			"problemMatcher": [],
-			"label": "npm: watch_server",
-			"detail": "tsnd --respawn ./server/index.ts"
+			"label": "watch_server"
+		},
+		{
+			"type": "npm",
+			"script": "watch_client",
+			"group": "build",
+			"problemMatcher": [],
+			"label": "watch_client"
+		},
+		{
+			"label": "watch",
+			"dependsOn":["watch_server", "watch_client"],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
 		}
 	]
 }
