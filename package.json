@@ -15,5 +15,11 @@
   "bugs": {
     "url": "https://github.com/horup/dndgame/issues"
   },
-  "homepage": "https://github.com/horup/dndgame#readme"
+  "homepage": "https://github.com/horup/dndgame#readme",
+  "dependencies": {
+    "cmdserverclient": "github:horup/cmdserverclient",
+    "ts-node": "^8.8.2",
+    "ts-node-dev": "^1.0.0-pre.44",
+    "typescript": "^3.8.3"
+  }
 }
