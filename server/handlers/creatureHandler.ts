@@ -1,6 +1,6 @@
 import { Handler } from "cmdserverclient";
 
-import { State, Command } from "../shared";
+import { State, Command } from "../..";
 
 export const creatureHandler:Handler<State, Command> = (s, c, push, origin) =>
 {

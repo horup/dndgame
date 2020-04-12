@@ -1,5 +1,5 @@
 import { Handler } from "cmdserverclient";
-import { Command, State } from "../shared";
+import { Command, State } from "../..";
 
 export const aiHandler:Handler<State, Command> = (s, c, push)=>
 {

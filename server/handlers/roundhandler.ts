@@ -1,5 +1,5 @@
 import { Handler } from "cmdserverclient";
-import { State, Command } from "../shared";
+import { State, Command } from "../..";
 
 export const roundHandler:Handler<State, Command> = (s, c, push)=>
 {

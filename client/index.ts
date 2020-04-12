@@ -1,5 +1,5 @@
 import {Client, Handler, process} from 'cmdserverclient';
-import {State, Command, setter, Creature} from '../server/shared';
+import {State, Command, setter, Creature} from '..';
 import * as PIXI from 'pixi.js';
 
 const app = new PIXI.Application({
@@ -17,7 +17,9 @@ client.handlers = [
             console.log(c);*/
     }
 ]
-client.connect("ws://localhost:8080");
+client.connect("ws://localhost:8080").then(e=>
+{
+});
 /*
 const render = new Render(app, client);
 

@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import { CreatureType } from '../../server/shared';
+import { CreatureType } from '../..';
 declare var require;
 PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
 export const player = [PIXI.Texture.from(require('./Characters/player0.png')).baseTexture, PIXI.Texture.from(require('./Characters/player1.png')).baseTexture];

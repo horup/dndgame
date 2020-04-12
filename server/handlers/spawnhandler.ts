@@ -1,5 +1,5 @@
 import { Handler } from "cmdserverclient";
-import { State, Command, Creature, Dice, CreatureType } from "../shared";
+import { State, Command, Creature, Dice, CreatureType } from "../..";
 
 let nextId = 1;
 export const spawnHandler:Handler<State, Command> = (s, c, push) =>

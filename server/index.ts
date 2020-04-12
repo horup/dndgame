@@ -1,6 +1,6 @@
 import * as http from 'http';
 import {Server, Handler} from 'cmdserverclient';
-import {State, Command, Creature, setter, defaultState, Dice} from './shared';
+import {State, Command, Creature, setter, defaultState, Dice} from '..';
 import { turnHandler, roundHandler, creatureHandler, spawnHandler, aiHandler } from './handlers';
 
 const httpServer = new http.Server();
