@@ -1,0 +1,13 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "npm",
+			"script": "watch_server",
+			"group": "build",
+			"problemMatcher": [],
+			"label": "npm: watch_server",
+			"detail": "tsnd --respawn ./server/index.ts"
+		}
+	]
+}
