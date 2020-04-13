@@ -1,7 +1,7 @@
 import {Client, Handler, process} from 'cmdserverclient';
 import {State, Command, setter, Creature} from '..';
 import * as PIXI from 'pixi.js';
-import {CenteredText, AtlasSpriteContainer, AtlasMap} from 'pixigamelib';
+import {CenteredText, AtlasSpriteContainer, AtlasMap, pan, zoom} from 'pixigamelib';
 
 const app = new PIXI.Application({
     resizeTo:window
@@ -33,9 +33,9 @@ function onLoad()
     }
     const sprites = new AtlasSpriteContainer(atlases);
     game.addChild(sprites);
-    sprites.setSprites({0:{atlas:0, frame:0, x:0, y:0, zIndex:0}});
-    sprites.setSprites({1:{atlas:1, frame:0, x:1, y:0, zIndex:0}});
-    status.text = "";
+    sprites.setSprites({'a':{atlas:0, frame:0, x:0, y:0, zIndex:0}});
+    sprites.setSprites({'b':{atlas:1, frame:0, x:1, y:0, zIndex:0}});
+    status.text = "Connecting...";
     const client = new Client<State, Command>({info:(s)=>{}});
     client.handlers = [
         setter,
@@ -47,12 +47,22 @@ function onLoad()
     ]
     client.connect("ws://localhost:8080").then(e=>
     {
+        if (e == true)
+        {
+            status.text = "";
+        }
+        else
+        {
+            status.text = "Connection failed, refresh and try again"
+        }
     });
 
     
-    const onKeydown = (e:KeyboardEvent)=>
+    window.onkeydown = (e:KeyboardEvent)=>
     {
-        Object.entries(client.state.creatures).forEach(([id,creature])=>
+        const panSpeed = 10;
+        pan(game, -1, 1);
+     /*   Object.entries(client.state.creatures).forEach(([id,creature])=>
         {
             if (creature.owner == client.id)
             {
@@ -63,8 +73,33 @@ function onLoad()
                     }
                 }, true);
             }
-        });
+        });*/
     }
 
-    window.onkeydown = onKeydown;
+    window.onmousewheel = (e:MouseWheelEvent)=>
+    {
+        const dir = Math.sign(e.deltaY);
+        if (dir != 0)
+        {
+            console.log(dir);
+            const speed = 1.1;
+
+            zoom(game, dir < 0 ? speed : 1/speed, new PIXI.Point(e.x, e.y));
+        }
+    }
+
+    window.onmousemove = (e:MouseEvent)=>
+    {
+        if (e.buttons == 1)
+        {
+            pan(game, -e.movementX, -e.movementY);
+        }
+    }
+
+}
+
+
+window.oncontextmenu = (e:MouseEvent)=>
+{
+    e.preventDefault();
 }
