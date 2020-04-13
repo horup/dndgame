@@ -3,7 +3,7 @@ import { State, Command } from "../..";
 
 export const turnHandler:Handler<State, Command> = (s, c, push)=>
 {
-    if (c.tick)
+    if (c.serverTick)
     {
         if (!s.turn)
         {

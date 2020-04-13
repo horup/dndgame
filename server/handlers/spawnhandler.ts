@@ -14,7 +14,7 @@ export const spawnHandler:Handler<State, Command> = (s, c, push) =>
             hitpoints:10,
             initiative:Dice.d20(),
             acted:true,
-            class1:CreatureType.Fighter,
+            class1:CreatureType.Dwarf,
             movement:6,
             movementTotal:6
         }
@@ -32,7 +32,7 @@ export const spawnHandler:Handler<State, Command> = (s, c, push) =>
             }
         });
     }
-    if (c.tick)
+    if (c.serverTick)
     {
         const players = Object.entries(s.creatures).filter(c=>c[1].owner);
         const monsters = Object.entries(s.creatures).filter(c=>!c[1].owner);

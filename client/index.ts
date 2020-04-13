@@ -1,7 +1,8 @@
 import {Client, Handler, process} from 'cmdserverclient';
-import {State, Command, setter, Creature} from '..';
+import {State, Command, setHandler, Creature} from '..';
 import * as PIXI from 'pixi.js';
 import {CenteredText, AtlasSpriteContainer, AtlasMap, pan, zoom} from 'pixigamelib';
+import { renderHandler } from './handlers';
 
 const app = new PIXI.Application({
     resizeTo:window
@@ -24,6 +25,11 @@ app.loader
 }).load();
 
 
+export interface Context
+{
+    sprites:AtlasSpriteContainer;
+}
+
 function onLoad()
 {
     const res = app.loader.resources;
@@ -33,16 +39,19 @@ function onLoad()
     }
     const sprites = new AtlasSpriteContainer(atlases);
     game.addChild(sprites);
-    sprites.setSprites({'a':{atlas:0, frame:0, x:0, y:0, zIndex:0}});
-    sprites.setSprites({'b':{atlas:1, frame:0, x:1, y:0, zIndex:0}});
     status.text = "Connecting...";
-    const client = new Client<State, Command>({info:(s)=>{}});
+    const client = new Client<State, Command, Context>({info:(s)=>{}});
+    client.context = {
+        sprites:sprites
+    }
+
     client.handlers = [
-        setter,
+        setHandler,
+        renderHandler,
         (s, c)=>
         {
-           /* if (!c.tick)
-                console.log(c);*/
+            if (!c.serverTick && !c.clientTick)
+                console.log(c);
         }
     ]
     client.connect("ws://localhost:8080").then(e=>
@@ -61,8 +70,7 @@ function onLoad()
     window.onkeydown = (e:KeyboardEvent)=>
     {
         const panSpeed = 10;
-        pan(game, -1, 1);
-     /*   Object.entries(client.state.creatures).forEach(([id,creature])=>
+        Object.entries(client.state.creatures).forEach(([id,creature])=>
         {
             if (creature.owner == client.id)
             {
@@ -73,7 +81,7 @@ function onLoad()
                     }
                 }, true);
             }
-        });*/
+        });
     }
 
     window.onmousewheel = (e:MouseWheelEvent)=>
@@ -96,8 +104,13 @@ function onLoad()
         }
     }
 
-}
+    app.ticker.add(()=>
+    {
+        if (client.state != null)
+            client.pushCommand({clientTick:{}}, false);
+    })
 
+}
 
 window.oncontextmenu = (e:MouseEvent)=>
 {

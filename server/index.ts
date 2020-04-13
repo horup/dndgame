@@ -1,6 +1,6 @@
 import * as http from 'http';
 import {Server, Handler} from 'cmdserverclient';
-import {State, Command, Creature, setter, defaultState, Dice} from '..';
+import {State, Command, Creature, setHandler, defaultState, Dice} from '..';
 import { turnHandler, roundHandler, creatureHandler, spawnHandler, aiHandler } from './handlers';
 
 const httpServer = new http.Server();
@@ -8,7 +8,7 @@ const server = new Server<State, Command>(defaultState, {info:(s)=>console.log(s
 server.handlers = [
     spawnHandler,
     creatureHandler,
-    setter,
+    setHandler,
     turnHandler,
     aiHandler,
     roundHandler,
@@ -31,7 +31,7 @@ server.onClientDisconnected = id=>
 setInterval(()=>
 {
     server.pushCommand({
-        tick:{}
+        serverTick:{}
     }, true)
 }, 250);
 

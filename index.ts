@@ -11,8 +11,8 @@ export interface State
 
 export enum CreatureType
 {
-    Fighter,
-    Skeleton
+    Dwarf = 0,
+    Skeleton = 1
 }
 
 
@@ -61,7 +61,8 @@ export interface Command
     /** Player left the game */
     readonly playerLeft?:{readonly id:string};
 
-    readonly tick?:{};
+    readonly serverTick?:{};
+    readonly clientTick?:{};
     
     /** A new round has started*/
     readonly setRound?:{readonly round:number};
@@ -76,7 +77,7 @@ export interface Command
 
 export const defaultState:State = {round:0, turn:undefined, creatures:{}};
 
-export const setter:Handler<State, Command> = (s, c, push)=>
+export const setHandler:Handler<State, Command> = (s, c, push)=>
 {
     if (c.setCreatures)
     {
