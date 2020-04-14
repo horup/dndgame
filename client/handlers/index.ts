@@ -15,7 +15,8 @@ export const renderHandler:Handler<State, Command, Context> = (s, c, p, o, conte
                     frame:0,
                     x:creature.x,
                     y:creature.y,
-                    zIndex:0
+                    zIndex:0,
+                    anchor:{x:0.5, y:0.75}
                 }
             })
         });

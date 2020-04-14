@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch_server": "tsnd --respawn ./server/index.ts",
-    "watch_client":"parcel ./client/index.html"
+    "watch_client": "parcel ./client/index.html"
   },
   "repository": {
     "type": "git",
