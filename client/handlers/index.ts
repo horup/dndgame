@@ -3,13 +3,28 @@ import {Handler} from 'cmdserverclient';
 import {State, Command} from '../..';
 import { Context } from '..';
 
+
 export const renderHandler:Handler<State, Command, Context> = (s, c, p, o, context)=>
 {
-    const sprites = context.sprites;
     if (c.clientTick)
     {
+        const cursorText = context.cursorText;
+        const global = context.mouse;
+        const local = global.getLocalPosition(context.sprites);
+        const sprites = context.sprites;
+        cursorText.position.set(global.global.x, global.global.y);
+
         Object.entries(s.creatures).forEach(([id, creature])=>{
             const hasTurn = s.turn != null && s.turn.creatureId == id;
+            if (hasTurn && creature.owner == context.client.id)
+            {
+                cursorText.visible = true;
+                cursorText.text = "Move " + 2;
+            }
+            else
+            {
+                cursorText.visible = false;
+            }
             sprites.setSprites({
                 [id]:{
                     atlas:creature.class1,

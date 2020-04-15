@@ -11,9 +11,12 @@ document.body.appendChild(app.view);
 
 const game = new PIXI.Container();
 game.scale.set(64);
+const ui = new PIXI.Container();
+
 const status = new CenteredText(app.view, "Loading assets...", {fill:'white'});
 
 app.stage.addChild(game);
+app.stage.addChild(ui);
 app.stage.addChild(status);
 
 app.loader
@@ -28,6 +31,9 @@ app.loader
 export interface Context
 {
     sprites:AtlasSpriteContainer;
+    cursorText:PIXI.Text;
+    mouse:PIXI.interaction.InteractionData;
+    client:Client<State, Command>;
 }
 
 function onLoad()
@@ -39,11 +45,21 @@ function onLoad()
     }
     const sprites = new AtlasSpriteContainer(atlases);
     game.addChild(sprites);
+    const cursorText = new PIXI.Text("hello world!", {fill:'white'} as PIXI.TextStyle);
+    cursorText.anchor.x = -0.1;
+    cursorText.anchor.y = -0.5;
+    ui.addChild(cursorText);
     status.text = "Connecting...";
+
     const client = new Client<State, Command, Context>({info:(s)=>{}});
     client.context = {
-        sprites:sprites
+        sprites:sprites,
+        cursorText:cursorText,
+        mouse:app.renderer.plugins.interaction.mouse,
+        client:client
     }
+
+    app.renderer.plugins.interaction.mouse.global;
 
     client.handlers = [
         setHandler,
@@ -58,6 +74,7 @@ function onLoad()
     {
         if (e == true)
         {
+            client.context.id = client.id; 
             status.text = "";
         }
         else
