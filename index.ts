@@ -99,6 +99,14 @@ export const setHandler:Handler<State, Command> = (s, c, push)=>
     }
 }
 
+export const distance = (from:{x:number, y:number}, to:{x:number, y:number}) =>
+{
+    let vx = to.x - from.x;
+    let vy = to.y - from.y;
+    const l = vx*vx + vy*vy;
+    return Math.sqrt(l); 
+}
+
 /**Returns true if the creature has the turn and can thus act right now */
 export const hasTurn = (creatureId:string, state:State)=>
 {

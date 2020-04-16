@@ -45,9 +45,9 @@ function onLoad()
     }
     const sprites = new AtlasSpriteContainer(atlases);
     game.addChild(sprites);
-    const cursorText = new PIXI.Text("hello world!", {fill:'white'} as PIXI.TextStyle);
+    const cursorText = new PIXI.Text("hello world!", {fill:'white', fontSize:'12pt'} as PIXI.TextStyle);
     cursorText.anchor.x = -0.1;
-    cursorText.anchor.y = -0.5;
+    cursorText.anchor.y = -1.0;
     ui.addChild(cursorText);
     status.text = "Connecting...";
 
