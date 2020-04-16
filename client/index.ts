@@ -1,5 +1,5 @@
 import {Client, Handler, process} from 'cmdserverclient';
-import {State, Command, setHandler, Creature} from '..';
+import {State, Command, setHandler, Creature, findCreaturesWithOwner} from '..';
 import * as PIXI from 'pixi.js';
 import {CenteredText, AtlasSpriteContainer, AtlasMap, pan, zoom} from 'pixigamelib';
 import { renderHandler, uiHandler } from './handlers';
@@ -115,9 +115,30 @@ function onLoad()
 
     window.onmousemove = (e:MouseEvent)=>
     {
-        if (e.buttons == 1)
+        if (e.buttons == 2)
         {
             pan(game, -e.movementX, -e.movementY);
+        }
+    }
+
+    window.onmousedown = (e:MouseEvent)=>
+    {
+        if (client.state == null)
+            return;
+
+        if (e.buttons == 1)
+        {
+            const local = sprites.toLocal(new PIXI.Point(e.x, e.y));
+            const [id, c] = findCreaturesWithOwner(client.id, client.state)[0];
+            if (id && c)
+            {
+                client.pushCommand({
+                    creatureAction:{
+                        creatureId:id,
+                        moveTo:local
+                    }
+                }, true);
+            }
         }
     }
 

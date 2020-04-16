@@ -110,7 +110,7 @@ export const distance = (from:{x:number, y:number}, to:{x:number, y:number}) =>
 /**Returns true if the creature has the turn and can thus act right now */
 export const hasTurn = (creatureId:string, state:State)=>
 {
-    const c = creatureWithTurn(state);
+    const c = findCreatureWithTurn(state);
     if (c != null && c[0] == creatureId)
         return true;
     return false;
@@ -119,7 +119,7 @@ export const hasTurn = (creatureId:string, state:State)=>
 /**Gets the creature whom has the turn. 
  * Returns null if no creatures have the turn right now. 
  */
-export const creatureWithTurn = (state:State)=>
+export const findCreatureWithTurn = (state:State)=>
 {
     if (state.turn && state.turn.creatureId != null)
     {
@@ -129,6 +129,12 @@ export const creatureWithTurn = (state:State)=>
     }
 
     return null;
+}
+
+/**Finds creature with the given ownerid */
+export function findCreaturesWithOwner(ownerId:string, state:State)
+{
+    return Object.entries(state.creatures).filter(([id, c])=>c.owner == ownerId);
 }
 
 export const Dice = 
