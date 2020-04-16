@@ -2,7 +2,7 @@ import {Client, Handler, process} from 'cmdserverclient';
 import {State, Command, setHandler, Creature} from '..';
 import * as PIXI from 'pixi.js';
 import {CenteredText, AtlasSpriteContainer, AtlasMap, pan, zoom} from 'pixigamelib';
-import { renderHandler } from './handlers';
+import { renderHandler, uiHandler } from './handlers';
 
 const app = new PIXI.Application({
     resizeTo:window
@@ -64,6 +64,7 @@ function onLoad()
     client.handlers = [
         setHandler,
         renderHandler,
+        uiHandler,
         (s, c)=>
         {
             if (!c.serverTick && !c.clientTick)
@@ -74,7 +75,6 @@ function onLoad()
     {
         if (e == true)
         {
-            client.context.id = client.id; 
             status.text = "";
         }
         else

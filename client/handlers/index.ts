@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
 import {Handler} from 'cmdserverclient';
-import {State, Command} from '../..';
+import {State, Command, hasTurn} from '../..';
 import { Context } from '..';
 
 
@@ -8,23 +8,9 @@ export const renderHandler:Handler<State, Command, Context> = (s, c, p, o, conte
 {
     if (c.clientTick)
     {
-        const cursorText = context.cursorText;
-        const global = context.mouse;
-        const local = global.getLocalPosition(context.sprites);
         const sprites = context.sprites;
-        cursorText.position.set(global.global.x, global.global.y);
 
         Object.entries(s.creatures).forEach(([id, creature])=>{
-            const hasTurn = s.turn != null && s.turn.creatureId == id;
-            if (hasTurn && creature.owner == context.client.id)
-            {
-                cursorText.visible = true;
-                cursorText.text = "Move " + 2;
-            }
-            else
-            {
-                cursorText.visible = false;
-            }
             sprites.setSprites({
                 [id]:{
                     atlas:creature.class1,
@@ -33,9 +19,35 @@ export const renderHandler:Handler<State, Command, Context> = (s, c, p, o, conte
                     y:creature.y,
                     zIndex:0,
                     anchor:{x:0.5, y:0.75},
-                    tint:hasTurn ? 0xFFFFFF : 0xA0A0A0
+                    tint:hasTurn(id, s) ? 0xFFFFFF : 0xA0A0A0
                 }
             })
         });
     }
 } 
+
+
+export const uiHandler:Handler<State, Command, Context> = (s, c, p, o, context)=>
+{
+    if (c.clientTick)
+    {
+        const global = context.mouse.global;
+        const cursorText = context.cursorText;
+        const myCreature = Object.entries(s.creatures)
+        .filter(c=>c[1].owner == context.client.id)[0];
+
+        if (myCreature && hasTurn(myCreature[0], s))
+        {
+            const [id, c] = myCreature;
+            cursorText.visible = true;
+            cursorText.text = "Move";
+            cursorText.position.set(global.x, global.y);
+        }
+        else
+        {
+            cursorText.visible = false;
+        }
+        
+        
+    }
+}

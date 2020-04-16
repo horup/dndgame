@@ -99,6 +99,30 @@ export const setHandler:Handler<State, Command> = (s, c, push)=>
     }
 }
 
+/**Returns true if the creature has the turn and can thus act right now */
+export const hasTurn = (creatureId:string, state:State)=>
+{
+    const c = creatureWithTurn(state);
+    if (c != null && c[0] == creatureId)
+        return true;
+    return false;
+}
+
+/**Gets the creature whom has the turn. 
+ * Returns null if no creatures have the turn right now. 
+ */
+export const creatureWithTurn = (state:State)=>
+{
+    if (state.turn && state.turn.creatureId != null)
+    {
+        const creature = state.creatures[state.turn.creatureId];
+
+        return [state.turn.creatureId, creature] as [string, Creature];
+    }
+
+    return null;
+}
+
 export const Dice = 
 {
     d20:(modifier:number = 0)=>{
