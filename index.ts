@@ -15,6 +15,18 @@ export enum CreatureType
     Skeleton = 1
 }
 
+export enum ActionType
+{
+    Attack = 0,
+    Dodge = 1
+}
+
+export interface Action
+{
+    type:ActionType;
+    description:string;
+    range?:number;
+}
 
 export interface Creature
 {
@@ -33,6 +45,9 @@ export interface Creature
 
     readonly movement:number;
     readonly movementTotal:number;
+
+    readonly actionPoints:number;
+    readonly avaliableActions:Action[];
 }
 
 export interface Turn

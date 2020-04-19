@@ -34,6 +34,7 @@ export interface Context
     cursorText:PIXI.Text;
     mouse:PIXI.interaction.InteractionData;
     client:Client<State, Command>;
+    actions:PIXI.Container;
 }
 
 function onLoad()
@@ -48,6 +49,9 @@ function onLoad()
     const cursorText = new PIXI.Text("hello world!", {fill:'white', fontSize:'12pt'} as PIXI.TextStyle);
     cursorText.anchor.x = -0.1;
     cursorText.anchor.y = -1.0;
+
+    const actions = new PIXI.Container();
+    ui.addChild(actions);
     ui.addChild(cursorText);
     status.text = "Connecting...";
 
@@ -56,7 +60,8 @@ function onLoad()
         sprites:sprites,
         cursorText:cursorText,
         mouse:app.renderer.plugins.interaction.mouse,
-        client:client
+        client:client,
+        actions:actions
     }
 
     app.renderer.plugins.interaction.mouse.global;

@@ -1,5 +1,5 @@
 import { Handler } from "cmdserverclient";
-import { State, Command, Creature, Dice, CreatureType } from "../..";
+import { State, Command, Creature, Dice, CreatureType, ActionType } from "../..";
 
 let nextId = 1;
 export const spawnHandler:Handler<State, Command> = (s, c, push) =>
@@ -16,7 +16,10 @@ export const spawnHandler:Handler<State, Command> = (s, c, push) =>
             acted:true,
             class1:CreatureType.Dwarf,
             movement:6,
-            movementTotal:6
+            movementTotal:6,
+            avaliableActions:[{type:ActionType.Attack, description:"Attack with Axe"}, 
+                              {type:ActionType.Dodge,  description:"Dodge"}],
+            actionPoints:1
         }
 
         push({setCreatures:{[nextId++]:creature}}, true);
@@ -47,7 +50,9 @@ export const spawnHandler:Handler<State, Command> = (s, c, push) =>
                 acted:true,
                 class1:CreatureType.Skeleton,
                 movement:6,
-                movementTotal:6
+                avaliableActions:[{type:ActionType.Attack, description:"Attack with Sword"}],
+                movementTotal:6,
+                actionPoints:1
             }
             push({setCreatures:{[nextId++]:monster}}, true);
         }
