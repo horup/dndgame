@@ -98,14 +98,17 @@ function onLoad()
         const panSpeed = 10;
         Object.entries(client.state.creatures).forEach(([id,creature])=>
         {
-            if (creature.owner == client.id)
+            if (e.code == "Space")
             {
-                client.pushCommand({
-                    creatureAction:{
-                        creatureId:id,
-                        endTurn:true
-                    }
-                }, true);
+                if (creature.owner == client.id)
+                {
+                    client.pushCommand({
+                        creatureAction:{
+                            creatureId:id,
+                            endTurn:true
+                        }
+                    }, true);
+                }
             }
         });
     }

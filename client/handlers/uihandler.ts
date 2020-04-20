@@ -15,15 +15,27 @@ export const uiHandler:Handler<State, Command, Context> = (s, c, p, o, context)=
             const avaliableActions = c.avaliableActions;
             const actionPoints = c.actionPoints;
             const container = context.actions;
+            
             container.children.forEach(c=>c.destroy());
+            // FUSK
             const spacing = 16;
             for (let i = 0; i < avaliableActions.length; i++)
             {
                 const a = avaliableActions[i];
-                const text = new PIXI.Text(i+1+":"+a.description, {fill:'white', fontSize:'16px'} as PIXI.TextStyle);
+                let text = container.children[i] != null ? container.children[i] as PIXI.Text : null;
+                if (!text)
+                {
+                    text = new PIXI.Text("", {fill:'white', fontSize:'16px'} as PIXI.TextStyle);
+                    container.addChild(text);
+                }
+
+                text.text = i+1+":"+a.description;
                 text.y = i * spacing;
                 container.addChild(text);
             }
+
+            console.log(container.children.length);
+
         }
         
     }
@@ -56,7 +68,7 @@ export const uiHandler:Handler<State, Command, Context> = (s, c, p, o, context)=
             }
             else
             {
-                cursorText.text = "Too far!";
+                cursorText.text = "Insufficient speed";
                 cursorText.style.fill = 'red';
             }
             
