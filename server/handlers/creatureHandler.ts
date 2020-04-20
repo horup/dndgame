@@ -1,6 +1,6 @@
 import { Handler } from "cmdserverclient";
 
-import { State, Command } from "../..";
+import { State, Command, isBlockedByCreature } from "../..";
 
 export const creatureHandler:Handler<State, Command> = (s, c, push, origin) =>
 {
@@ -22,11 +22,14 @@ export const creatureHandler:Handler<State, Command> = (s, c, push, origin) =>
             const l = Math.sqrt(vx*vx+vy*vy);
             if (l <= creature.movement)
             {
-                push({
-                    setCreatures:{[id]:{...creature, 
-                        x:c.creatureAction.moveTo.x, 
-                        y:c.creatureAction.moveTo.y, movement:creature.movement - l}}
-                }, true);
+                if (isBlockedByCreature(c.creatureAction.moveTo.x, c.creatureAction.moveTo.y, id, s) == null)
+                {
+                    push({
+                        setCreatures:{[id]:{...creature, 
+                            x:c.creatureAction.moveTo.x, 
+                            y:c.creatureAction.moveTo.y, movement:creature.movement - l}}
+                    }, true);
+                }
             }
         }
         if (c.creatureAction.endTurn != null)

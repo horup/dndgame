@@ -27,6 +27,13 @@ export const renderHandler:Handler<State, Command, Context> = (s, c, p, o, conte
             graphics.beginFill(0xFFFFFF, hasTurn(id, s) ? 1.0 : 0.25);
             graphics.drawCircle(creature.x, creature.y, creature.size);
             graphics.endFill();
+            graphics.beginFill()
+
+
+            graphics.beginFill(0xFF0000, 0.15);
+            graphics.drawCircle(creature.x, creature.y, creature.size+1);
+            graphics.endFill();
+            graphics.beginFill();
         });
 
         

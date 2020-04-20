@@ -160,3 +160,41 @@ export const Dice =
         return Math.ceil(Math.random()*20) + modifier;
     }
 }
+
+/**Returns null if x and y are not blocked by a creature, else returns the creature */
+export function isBlockedByCreature(x:number, y:number, id:string, state:State)
+{
+    let blocked:string = null;
+    let creature = state.creatures[id];
+    Object.entries(state.creatures).forEach((v)=>{
+        if (v[0] != id && blocked == null)
+        {
+            let c = v[1];
+            const l = creature.size + c.size;
+            let vx = c.x - x;
+            let vy = c.y - y;
+            if (Math.sqrt(vx*vx+vy*vy) <= l)
+            {
+                blocked = v[0];
+            }
+        }
+    });
+    return blocked;
+}
+
+/**Returns true if the target creature id is in attack range of the attacker */
+export function isInAttackRange(attacker:string, target:string, state:State)
+{
+    let c1 = state.creatures[attacker];
+    let c2 = state.creatures[target];
+    const vx = c1.x - c2.x;
+    const vy = c1.y - c2.y;
+    const l = Math.sqrt(vx*vx+vy*vy);
+    const range = c1.size+c2.size+0.5;
+    if (l<=range)
+    {
+        return true;
+    }
+
+    return false;
+}
