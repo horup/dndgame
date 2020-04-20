@@ -35,6 +35,7 @@ export interface Context
     mouse:PIXI.interaction.InteractionData;
     client:Client<State, Command>;
     actions:PIXI.Container;
+    graphics:PIXI.Graphics;
 }
 
 function onLoad()
@@ -45,6 +46,8 @@ function onLoad()
         1:{columns:1, rows:1, texture:res.skeleton.texture.baseTexture}
     }
     const sprites = new AtlasSpriteContainer(atlases);
+    const graphics = new PIXI.Graphics();
+    game.addChild(graphics);
     game.addChild(sprites);
     const cursorText = new PIXI.Text("hello world!", {fill:'white', fontSize:'12pt'} as PIXI.TextStyle);
     cursorText.anchor.x = -0.1;
@@ -61,7 +64,8 @@ function onLoad()
         cursorText:cursorText,
         mouse:app.renderer.plugins.interaction.mouse,
         client:client,
-        actions:actions
+        actions:actions,
+        graphics:graphics
     }
 
     app.renderer.plugins.interaction.mouse.global;

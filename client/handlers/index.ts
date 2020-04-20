@@ -9,7 +9,9 @@ export const renderHandler:Handler<State, Command, Context> = (s, c, p, o, conte
     if (c.clientTick)
     {
         const sprites = context.sprites;
-
+        const graphics = context.graphics;
+        graphics.clear();
+        
         Object.entries(s.creatures).forEach(([id, creature])=>{
             sprites.setSprites({
                 [id]:{
@@ -18,11 +20,16 @@ export const renderHandler:Handler<State, Command, Context> = (s, c, p, o, conte
                     x:creature.x,
                     y:creature.y,
                     zIndex:creature.y,
-                    anchor:{x:0.5, y:0.75},
-                    tint:hasTurn(id, s) ? 0xFFFFFF : 0xA0A0A0
+                    anchor:{x:0.5, y:0.8}
                 }
             })
+
+            graphics.beginFill(0xFFFFFF, hasTurn(id, s) ? 1.0 : 0.25);
+            graphics.drawCircle(creature.x, creature.y, creature.size);
+            graphics.endFill();
         });
+
+        
     }
 } 
 

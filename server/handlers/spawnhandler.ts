@@ -19,7 +19,8 @@ export const spawnHandler:Handler<State, Command> = (s, c, push) =>
             movementTotal:6,
             avaliableActions:[{type:ActionType.Attack, description:"Attack with Axe"}, 
                               {type:ActionType.Dodge,  description:"Dodge"}],
-            actionPoints:1
+            actionPoints:1,
+            size:0.5
         }
 
         push({setCreatures:{[nextId++]:creature}}, true);
@@ -52,7 +53,8 @@ export const spawnHandler:Handler<State, Command> = (s, c, push) =>
                 movement:6,
                 avaliableActions:[{type:ActionType.Attack, description:"Attack with Sword"}],
                 movementTotal:6,
-                actionPoints:1
+                actionPoints:1,
+                size:0.5
             }
             push({setCreatures:{[nextId++]:monster}}, true);
         }

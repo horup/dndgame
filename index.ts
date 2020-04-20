@@ -36,6 +36,8 @@ export interface Creature
     readonly y:number;
     readonly hitpoints:number;
 
+    readonly size:number;
+
     /** The creatures initiative */
     readonly initiative:number; 
 
