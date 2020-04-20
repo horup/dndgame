@@ -1,5 +1,5 @@
 import {Handler} from 'cmdserverclient';
-import {State, Command, hasTurn, distance} from '../..';
+import {State, Command, hasTurn, distance, isBlockedByCreature} from '../..';
 import { Context } from '..';
 import * as PIXI from 'pixi.js';
 
@@ -43,8 +43,16 @@ export const uiHandler:Handler<State, Command, Context> = (s, c, p, o, context)=
             const d = distance(c, local);
             if (d < c.movement)
             {
-                cursorText.text = "Move " + d.toFixed(2) + " / " + c.movement.toFixed(2);
-                cursorText.style.fill = 'white';
+                if (isBlockedByCreature(local.x, local.y, id, s) == null)
+                {
+                    cursorText.text = "Move " + d.toFixed(2) + " / " + c.movement.toFixed(2);
+                    cursorText.style.fill = 'white';
+                }
+                else
+                {
+                    cursorText.text = "Blocked!";
+                cursorText.style.fill = 'red';
+                }
             }
             else
             {
