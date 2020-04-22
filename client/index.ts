@@ -186,12 +186,19 @@ function onLoad()
             const [id, c] = findCreaturesWithOwner(client.id, client.state)[0];
             if (id && c)
             {
-                client.pushCommand({
-                    creatureAction:{
-                        creatureId:id,
-                        moveTo:local
-                    }
-                }, true);
+                if (client.context.selectedAction == null)
+                {
+                    client.pushCommand({
+                        creatureAction:{
+                            creatureId:id,
+                            moveTo:local
+                        }
+                    }, true);
+                }
+                else
+                {
+                    console.log(client.context.selectedAction);
+                }
             }
         }
     }

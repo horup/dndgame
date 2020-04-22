@@ -21,11 +21,33 @@ export enum ActionType
     Dodge = 1
 }
 
+export enum ActionFuel
+{
+    Speed = 0,
+    ActionPoints = 1,
+    BonusActionPoints = 2,
+    ReactionActionPoints = 3
+}
+
 export interface Action
 {
+    /**The type of action being performed */
     type:ActionType;
+
+    /**The human readable description of the action */
     description:string;
+
+    /**The optional range of the action.
+     * If not specified, no range check needs to be done.
+     */
     range?:number;
+    
+    /**True if the action targets other creatures. 
+     */
+    targetsOther?:boolean;
+
+    /**True if the action targets the creature performing the action */
+    targetSelf?:boolean;
 }
 
 export interface Creature
@@ -161,7 +183,8 @@ export const Dice =
     }
 }
 
-/**Returns null if x and y are not blocked by a creature, else returns the creature */
+/**Returns null if x and y are not blocked by a creature, where id is the creature id
+ * else returns the creature id which blocks the creature with the given id */
 export function isBlockedByCreature(x:number, y:number, id:string, state:State)
 {
     let blocked:string = null;
@@ -182,6 +205,28 @@ export function isBlockedByCreature(x:number, y:number, id:string, state:State)
     return blocked;
 }
 
+/**Gets the creature where x and y intersects with its radius.
+ * Returns null if no creature is found
+ */
+export function getCreatureAtPoint(x:number, y:number, state:State):[string, Creature]
+{
+    let creature:[string, Creature] = null;
+    Object.entries(state.creatures).forEach(([id, c])=>{
+        if (creature == null)
+        {
+            let vx = c.x - x;
+            let vy = c.y - y;
+            let l = Math.sqrt(vx*vx+vy*vy);
+            if (l <= c.size)
+            {
+                creature = [id, c];
+            }
+        }
+    })
+
+    return creature;
+}
+
 /**Returns true if the target creature id is in attack range of the attacker */
 export function isInAttackRange(attacker:string, target:string, state:State)
 {
@@ -198,3 +243,4 @@ export function isInAttackRange(attacker:string, target:string, state:State)
 
     return false;
 }
+

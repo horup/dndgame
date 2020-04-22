@@ -1,5 +1,5 @@
 import {Handler} from 'cmdserverclient';
-import {State, Command, hasTurn, distance, isBlockedByCreature} from '../..';
+import {State, Command, hasTurn, distance, isBlockedByCreature, getCreatureAtPoint} from '../..';
 import { Context } from '..';
 import * as PIXI from 'pixi.js';
 
@@ -77,14 +77,23 @@ export const uiHandler:Handler<State, Command, Context> = (s, c, p, o, context)=
             else
             {
                 const d = distance(c, local);
+                cursorText.text = context.selectedAction.description;
                 if (context.selectedAction.range == null || d < context.selectedAction.range + c.size)
                 {
-                    cursorText.text = context.selectedAction.description;
-                    cursorText.style.fill = 'white';
+                    const target = getCreatureAtPoint(local.x, local.y, s);
+                    if (target == null || target[0] == id)
+                    {
+                        cursorText.text += "\nNo valid target";
+                        cursorText.style.fill = 'red';
+                    }
+                    else
+                    {
+                        cursorText.style.fill = 'white';
+                    }
                 }
                 else
                 {
-                    cursorText.text = "Not in range";
+                    cursorText.text += "\nNot in range";
                     cursorText.style.fill = 'red';
                 }
 

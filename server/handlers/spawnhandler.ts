@@ -17,7 +17,7 @@ export const spawnHandler:Handler<State, Command> = (s, c, push) =>
             class1:CreatureType.Dwarf,
             movement:6,
             movementTotal:6,
-            avaliableActions:[{type:ActionType.Attack, description:"Attack with Axe", range:1}, 
+            avaliableActions:[{type:ActionType.Attack, description:"Attack with Axe", range:undefined}, 
                               {type:ActionType.Dodge,  description:"Dodge"}],
             actionPoints:1,
             size:0.5
