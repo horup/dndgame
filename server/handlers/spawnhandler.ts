@@ -17,7 +17,7 @@ export const spawnHandler:Handler<State, Command> = (s, c, push) =>
             class1:CreatureType.Dwarf,
             movement:6,
             movementTotal:6,
-            avaliableActions:[{type:ActionType.Attack, description:"Attack with Axe"}, 
+            avaliableActions:[{type:ActionType.Attack, description:"Attack with Axe", range:1}, 
                               {type:ActionType.Dodge,  description:"Dodge"}],
             actionPoints:1,
             size:0.5
@@ -51,7 +51,7 @@ export const spawnHandler:Handler<State, Command> = (s, c, push) =>
                 acted:true,
                 class1:CreatureType.Skeleton,
                 movement:6,
-                avaliableActions:[{type:ActionType.Attack, description:"Attack with Sword"}],
+                avaliableActions:[{type:ActionType.Attack, description:"Attack with Sword", range:1}],
                 movementTotal:6,
                 actionPoints:1,
                 size:0.5

@@ -1,5 +1,5 @@
 import {Client, Handler, process} from 'cmdserverclient';
-import {State, Command, setHandler, Creature, findCreaturesWithOwner} from '..';
+import {State, Command, setHandler, Creature, findCreaturesWithOwner, Action} from '..';
 import * as PIXI from 'pixi.js';
 import {CenteredText, AtlasSpriteContainer, AtlasMap, pan, zoom} from 'pixigamelib';
 import { renderHandler, uiHandler } from './handlers';
@@ -36,6 +36,7 @@ export interface Context
     client:Client<State, Command>;
     actions:PIXI.Container;
     graphics:PIXI.Graphics;
+    selectedAction?:Action; 
 }
 
 function onLoad()
@@ -96,21 +97,62 @@ function onLoad()
     window.onkeydown = (e:KeyboardEvent)=>
     {
         const panSpeed = 10;
-        Object.entries(client.state.creatures).forEach(([id,creature])=>
+        console.log(e.code);
+        if (client.state == null)
+            return;
+
+        let myCreature = findCreaturesWithOwner(client.id, client.state)[0];
+        if (myCreature != null)
         {
+            const [id, creature] = myCreature;
             if (e.code == "Space")
             {
-                if (creature.owner == client.id)
-                {
-                    client.pushCommand({
-                        creatureAction:{
-                            creatureId:id,
-                            endTurn:true
-                        }
-                    }, true);
-                }
+                client.pushCommand({
+                    creatureAction:{
+                        creatureId:id,
+                        endTurn:true
+                    }
+                }, true);
             }
-        });
+            else if (e.code == "Digit1")
+            {
+                client.context.selectedAction = creature.avaliableActions[0] != null ? creature.avaliableActions[0] : client.context.selectedAction;
+            }
+            else if (e.code == "Digit2")
+            {
+                client.context.selectedAction = creature.avaliableActions[1] != null ? creature.avaliableActions[1] : client.context.selectedAction;
+            }
+            else if (e.code == "Escape")
+            {
+                client.context.selectedAction = null;
+            }
+        }
+
+
+
+       /* Object.entries(client.state.creatures).forEach(([id,creature])=>
+        {
+            if (creature.owner == client.id)
+            {
+                if (e.code == "Space")
+                {
+                    
+                        client.pushCommand({
+                            creatureAction:{
+                                creatureId:id,
+                                endTurn:true
+                            }
+                        }, true);
+                }
+                else if (e.code == "Digit1")
+                {
+                } 
+                else if (e.code == "Digit2")
+                {
+                } 
+
+            }
+        });*/
     }
 
     window.onmousewheel = (e:MouseWheelEvent)=>

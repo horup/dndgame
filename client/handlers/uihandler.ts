@@ -52,24 +52,43 @@ export const uiHandler:Handler<State, Command, Context> = (s, c, p, o, context)=
             const [id, c] = myCreature;
             cursorText.visible = true;
             cursorText.position.set(global.x, global.y);
-            const d = distance(c, local);
-            if (d < c.movement)
+            if (context.selectedAction == null)
             {
-                if (isBlockedByCreature(local.x, local.y, id, s) == null)
+                const d = distance(c, local);
+                if (d < c.movement)
                 {
-                    cursorText.text = "Move " + d.toFixed(2) + " / " + c.movement.toFixed(2);
-                    cursorText.style.fill = 'white';
+                    if (isBlockedByCreature(local.x, local.y, id, s) == null)
+                    {
+                        cursorText.text = "Move\n" + d.toFixed(2) + " / " + c.movement.toFixed(2);
+                        cursorText.style.fill = 'white';
+                    }
+                    else
+                    {
+                        cursorText.text = "Blocked!";
+                        cursorText.style.fill = 'red';
+                    }
                 }
                 else
                 {
-                    cursorText.text = "Blocked!";
-                cursorText.style.fill = 'red';
+                    cursorText.text = "Insufficient speed";
+                    cursorText.style.fill = 'red';
                 }
             }
             else
             {
-                cursorText.text = "Insufficient speed";
-                cursorText.style.fill = 'red';
+                const d = distance(c, local);
+                if (context.selectedAction.range == null || d < context.selectedAction.range + c.size)
+                {
+                    cursorText.text = context.selectedAction.description;
+                    cursorText.style.fill = 'white';
+                }
+                else
+                {
+                    cursorText.text = "Not in range";
+                    cursorText.style.fill = 'red';
+                }
+
+                cursorText.text += "\nPress escape to cancel";
             }
             
         }
